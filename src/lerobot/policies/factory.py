@@ -142,6 +142,10 @@ def get_policy_class(name: str) -> type[PreTrainedPolicy]:
         from lerobot.policies.smolvla.modeling_smolvla import SmolVLAPolicy
 
         return SmolVLAPolicy
+    elif name == "smolvla_layercut":
+        from lerobot.policies.smolvla_layercut.modeling_smolvla_layercut import SmolVLALayercutPolicy
+
+        return SmolVLALayercutPolicy
     elif name == "sarm":
         from lerobot.policies.sarm.modeling_sarm import SARMRewardModel
 
@@ -202,6 +206,9 @@ def make_policy_config(policy_type: str, **kwargs) -> PreTrainedConfig:
         return SACConfig(**kwargs)
     elif policy_type == "smolvla":
         return SmolVLAConfig(**kwargs)
+    elif policy_type == "smolvla_layercut":
+        from lerobot.policies.smolvla_layercut.configuration_smolvla_layercut import SmolVLALayercutConfig
+        return SmolVLALayercutConfig(**kwargs)
     elif policy_type == "reward_classifier":
         return RewardClassifierConfig(**kwargs)
     elif policy_type == "groot":

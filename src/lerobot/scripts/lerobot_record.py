@@ -459,6 +459,25 @@ def record_loop(
 
         # Write to dataset (only on real policy frames, not interpolated-only iterations)
         if dataset is not None and is_record_frame:
+            #TODO: QUITAR ESTO HASTA LA LINEA DE PUNTOS, NO ES DE LA LIBRERIA VANILLA
+            #print("DEBUG action_values type:", type(action_values))
+            #print("DEBUG action_values shape:", getattr(action_values, "shape", None))
+            #print("DEBUG action_values:", action_values)
+            #print("DEBUG action feature:", dataset.features.get("action"))
+            # Convert policy tensor actions to the named joint-action dict expected by build_dataset_frame.
+            if isinstance(action_values, torch.Tensor):
+                action_values = action_values.detach().cpu()
+
+                # SmolVLA returns shape [1, action_dim] during inference.
+                if action_values.ndim == 2 and action_values.shape[0] == 1:
+                    action_values = action_values.squeeze(0)
+
+                action_names = dataset.features[ACTION]["names"]
+                action_values = {
+                    name: float(action_values[i].item())
+                    for i, name in enumerate(action_names)
+                }
+            ###########################################
             action_frame = build_dataset_frame(dataset.features, action_values, prefix=ACTION)
             frame = {**observation_frame, **action_frame, "task": single_task}
             dataset.add_frame(frame)
