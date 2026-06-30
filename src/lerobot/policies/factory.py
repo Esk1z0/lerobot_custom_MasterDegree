@@ -39,6 +39,10 @@ from lerobot.policies.sac.configuration_sac import SACConfig
 from lerobot.policies.sac.reward_model.configuration_classifier import RewardClassifierConfig
 from lerobot.policies.sarm.configuration_sarm import SARMConfig
 from lerobot.policies.smolvla.configuration_smolvla import SmolVLAConfig
+from lerobot.policies.smolvla_d.configuration_smolvla_d import SmolVLADConfig
+from lerobot.policies.smolvla_m.configuration_smolvla_m import SmolVLAMConfig
+from lerobot.policies.smolvla_md.configuration_smolvla_md import SmolVLAMDConfig
+from lerobot.policies.smolvla_vanilla.configuration_smolvla_vanilla import SmolVLAVanillaConfig
 from lerobot.policies.tdmpc.configuration_tdmpc import TDMPCConfig
 from lerobot.policies.utils import validate_visual_features_consistency
 from lerobot.policies.vqbet.configuration_vqbet import VQBeTConfig
@@ -142,6 +146,22 @@ def get_policy_class(name: str) -> type[PreTrainedPolicy]:
         from lerobot.policies.smolvla.modeling_smolvla import SmolVLAPolicy
 
         return SmolVLAPolicy
+    elif name == "smolvla_d":
+        from lerobot.policies.smolvla_d.modeling_smolvla_d import SmolVLADPolicy
+
+        return SmolVLADPolicy
+    elif name == "smolvla_m":
+        from lerobot.policies.smolvla_m.modeling_smolvla_m import SmolVLAMPolicy
+
+        return SmolVLAMPolicy
+    elif name == "smolvla_md":
+        from lerobot.policies.smolvla_md.modeling_smolvla_md import SmolVLAMDPolicy
+
+        return SmolVLAMDPolicy
+    elif name == "smolvla_vanilla":
+        from lerobot.policies.smolvla_vanilla.modeling_smolvla_vanilla import SmolVLAVanillaPolicy
+
+        return SmolVLAVanillaPolicy
     elif name == "smolvla_layercut":
         from lerobot.policies.smolvla_layercut.modeling_smolvla_layercut import SmolVLALayercutPolicy
 
@@ -206,6 +226,14 @@ def make_policy_config(policy_type: str, **kwargs) -> PreTrainedConfig:
         return SACConfig(**kwargs)
     elif policy_type == "smolvla":
         return SmolVLAConfig(**kwargs)
+    elif policy_type == "smolvla_d":
+        return SmolVLADConfig(**kwargs)
+    elif policy_type == "smolvla_m":
+        return SmolVLAMConfig(**kwargs)
+    elif policy_type == "smolvla_md":
+        return SmolVLAMDConfig(**kwargs)
+    elif policy_type == "smolvla_vanilla":
+        return SmolVLAVanillaConfig(**kwargs)
     elif policy_type == "smolvla_layercut":
         from lerobot.policies.smolvla_layercut.configuration_smolvla_layercut import SmolVLALayercutConfig
         return SmolVLALayercutConfig(**kwargs)
@@ -399,6 +427,38 @@ def make_pre_post_processors(
         from lerobot.policies.smolvla.processor_smolvla import make_smolvla_pre_post_processors
 
         processors = make_smolvla_pre_post_processors(
+            config=policy_cfg,
+            dataset_stats=kwargs.get("dataset_stats"),
+        )
+
+    elif isinstance(policy_cfg, SmolVLADConfig):
+        from lerobot.policies.smolvla_d.processor_smolvla_d import make_smolvla_d_pre_post_processors
+
+        processors = make_smolvla_d_pre_post_processors(
+            config=policy_cfg,
+            dataset_stats=kwargs.get("dataset_stats"),
+        )
+
+    elif isinstance(policy_cfg, SmolVLAMConfig):
+        from lerobot.policies.smolvla_m.processor_smolvla_m import make_smolvla_m_pre_post_processors
+
+        processors = make_smolvla_m_pre_post_processors(
+            config=policy_cfg,
+            dataset_stats=kwargs.get("dataset_stats"),
+        )
+
+    elif isinstance(policy_cfg, SmolVLAMDConfig):
+        from lerobot.policies.smolvla_md.processor_smolvla_md import make_smolvla_md_pre_post_processors
+
+        processors = make_smolvla_md_pre_post_processors(
+            config=policy_cfg,
+            dataset_stats=kwargs.get("dataset_stats"),
+        )
+
+    elif isinstance(policy_cfg, SmolVLAVanillaConfig):
+        from lerobot.policies.smolvla_vanilla.processor_smolvla_vanilla import make_smolvla_vanilla_pre_post_processors
+
+        processors = make_smolvla_vanilla_pre_post_processors(
             config=policy_cfg,
             dataset_stats=kwargs.get("dataset_stats"),
         )

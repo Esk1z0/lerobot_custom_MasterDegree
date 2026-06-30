@@ -22,6 +22,12 @@ from .pi05.configuration_pi05 import PI05Config as PI05Config
 from .smolvla.configuration_smolvla import SmolVLAConfig as SmolVLAConfig
 from .smolvla.processor_smolvla import SmolVLANewLineProcessor
 from .smolvla_layercut.configuration_smolvla_layercut import SmolVLALayercutConfig as SmolVLALayercutConfig
+from .smolvla_d.configuration_smolvla_d import SmolVLADConfig as SmolVLADConfig
+from .smolvla_d.processor_smolvla_d import SmolVLADNewLineProcessor
+from .smolvla_m.configuration_smolvla_m import SmolVLAMConfig as SmolVLAMConfig
+from .smolvla_m.processor_smolvla_m import SmolVLAMNewLineProcessor
+from .smolvla_md.configuration_smolvla_md import SmolVLAMDConfig as SmolVLAMDConfig
+from .smolvla_md.processor_smolvla_md import SmolVLAMDNewLineProcessor
 from .tdmpc.configuration_tdmpc import TDMPCConfig as TDMPCConfig
 from .vqbet.configuration_vqbet import VQBeTConfig as VQBeTConfig
 from .wall_x.configuration_wall_x import WallXConfig as WallXConfig
@@ -36,7 +42,9 @@ __all__ = [
     "PI0FastConfig",
     "SmolVLAConfig",
     "SmolVLALayercutConfig",
-    "SARMConfig",
+    "SmolVLADConfig",
+    "SmolVLAMConfig",
+    "SmolVLAMDConfig",
     "TDMPCConfig",
     "VQBeTConfig",
     "GrootConfig",
