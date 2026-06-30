@@ -585,6 +585,8 @@ class SmolVLAMDPolicy(PreTrainedPolicy):
         pc_key = "observation.depth.point_cloud"
         if pc_key in batch:
             pc = batch[pc_key]
+            if pc.dim() == 3:  # (B, T, N*3) when n_obs_steps>1 — use current frame only
+                pc = pc[:, -1, :]
             if pc.dim() == 2:  # (B, N*3) flat from parquet storage
                 pc = pc.view(pc.shape[0], -1, 3)
             return pc

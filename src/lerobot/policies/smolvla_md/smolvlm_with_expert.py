@@ -165,6 +165,7 @@ class TemporalSmolVLMEncoder(nn.Module):
         for idx, layer in enumerate(self.layers):
             if idx in self.temporal_layers and K > 1:
                 alpha = self.temporal_alpha[self._layer_to_alpha[idx]]
+                orig_dtype = hidden_states.dtype
 
                 # --- Spatial attention (manual to intercept before MLP) ---
                 residual = hidden_states
@@ -176,7 +177,9 @@ class TemporalSmolVLMEncoder(nn.Module):
                 )
                 # --- Temporal attention (same W_q/k/v, causal, gated by alpha) ---
                 temporal_out = self._temporal_attn(layer, h_norm, B, K, N)
-                hidden_states = residual + spatial_out + alpha * temporal_out
+                # Cast alpha (Float32 param) and temporal_out to hidden_states dtype to
+                # prevent Float32/BFloat16 type promotion from corrupting the residual stream.
+                hidden_states = residual + spatial_out + alpha.to(orig_dtype) * temporal_out.to(orig_dtype)
 
                 # --- MLP (unchanged) ---
                 residual = hidden_states

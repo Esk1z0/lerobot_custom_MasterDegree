@@ -356,7 +356,7 @@ def main():
 
     info["features"][feature_name] = {
         "dtype": "float32",
-        "shape": [n_pts, 3],
+        "shape": [n_pts * 3],  # flat in parquet; model reshapes to (N, 3)
         "names": None,
     }
     with open(info_path, "w") as f:

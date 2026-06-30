@@ -302,7 +302,9 @@ class SmolVLADPolicy(PreTrainedPolicy):
         for key in ("observation.depth.point_cloud", "depth_point_cloud"):
             if key in batch:
                 pc = batch[key]
-                if pc.dim() == 2:  # (B, N*3) from parquet storage
+                if pc.dim() == 3:  # (B, T, N*3) when n_obs_steps>1 — use current frame only
+                    pc = pc[:, -1, :]
+                if pc.dim() == 2:  # (B, N*3) flat from parquet storage
                     pc = pc.view(pc.shape[0], -1, 3)
                 return pc
 
