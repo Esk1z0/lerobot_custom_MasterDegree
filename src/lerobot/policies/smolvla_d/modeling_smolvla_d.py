@@ -291,14 +291,20 @@ class SmolVLADPolicy(PreTrainedPolicy):
 
     def _get_depth_point_cloud(self, batch: dict[str, Tensor]) -> Tensor | None:
         """
-        Returns a (B, K, 3) float32 tensor of sampled depth points, or None.
+        Returns a (B, N, 3) float32 tensor of sampled depth points, or None.
 
         Priority:
-          1. Pre-computed tensor from batch["depth_point_cloud"] (training / offline)
-          2. Cached result from the async StereoDepthWorker (live inference)
+          1. Pre-computed tensor from batch["observation.depth.point_cloud"]
+             (parquet storage — shape (B, N*3) flat, reshaped here to (B, N, 3))
+          2. Pre-computed tensor from batch["depth_point_cloud"] (already shaped)
+          3. Cached result from the async StereoDepthWorker (live inference)
         """
-        if "depth_point_cloud" in batch:
-            return batch["depth_point_cloud"]
+        for key in ("observation.depth.point_cloud", "depth_point_cloud"):
+            if key in batch:
+                pc = batch[key]
+                if pc.dim() == 2:  # (B, N*3) from parquet storage
+                    pc = pc.view(pc.shape[0], -1, 3)
+                return pc
 
         if self.depth_worker is not None:
             pts = self.depth_worker.get_latest_points()
